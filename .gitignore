@@ -155,3 +155,5 @@ cython_debug/
 # Pictures
 pictures/
 pictures2/
+
+test
