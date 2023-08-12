@@ -36,14 +36,14 @@ GRIDQ= np.arange(1, 6)
 
 feature_matrix= []
 img_directories= []
-for dir in os.listdir("./pictures"):
-    if dir.endswith(".png"):
-        img_dir= "./pictures/" + dir
+file_list= os.listdir("./pictures")
+for i in range(1, 1500):
+    img_name= str(i) + ".png"
+    img_dir= "./pictures/" + str(i) + ".png"
+    if img_name in file_list:
         feature_vec= get_feature_vector(img_dir, grid_q= GRIDQ, orientation= 10, edge= False)
-
         feature_matrix.append(feature_vec)
         img_directories.append(img_dir)
-
 
 feature_matrix= np.array(feature_matrix)
 img_directories= np.array(img_directories)
@@ -68,3 +68,52 @@ print(f"Zero feature ratio: {100*zero_ratio:.1f}%", )
 unique_feature, c_unique_feature= np.unique(feature_matrix, return_counts= True)
 unique_ratio= 1 - np.sum(np.sort(c_unique_feature[c_unique_feature!= 1]))/feature_matrix.size 
 print(f"Unique feature ratio: {100*unique_ratio:.1f}%")
+print(25*"-")
+
+def test_model(X, y, img_directories, no_cycles= 10):
+    MAE_list= []
+    top_error_dict= {}
+    for i in range(no_cycles):
+        X_train, X_test, y_train, y_test, i_train, i_test= train_test_split(X, y, np.arange(labels.size), test_size= .3)
+
+        scaler= StandardScaler()
+
+        pca= PCA()
+        principal_components= pca.fit_transform(X_train)
+        var_csum= np.cumsum(pca.explained_variance_ratio_)
+
+        required_variance= .7
+        no_components= sum(pca.explained_variance_ratio_.cumsum() < required_variance) + 1
+        pca_var= PCA(no_components)
+
+        svr= SVR(C= 100, gamma= .01)
+
+        model= Pipeline([
+            ("Scaler", scaler),
+            ("PCA", pca_var),
+            ("SVR", svr)
+        ])
+
+        model.fit(X_train, y_train)
+        y_pred= model.predict(X_test)
+
+        mae= mean_absolute_error(y_test, y_pred)
+        MAE_list.append(round(mae, 2))
+        
+        y_error= abs(y_pred-y_test)
+        y_error_sorted= np.sort(y_error)[::-1]
+
+        for i in range(3):
+            i_max_error= np.where(y_error== y_error_sorted[i])[0]
+            i_abs= i_test[i_max_error][0]
+            img_i= img_directories[i_abs][11:]
+            top_error_dict[img_i] = top_error_dict.get(img_i, 0) + 1
+
+    top_error_dict= {key: value for key, value in sorted(top_error_dict.items(), key= lambda item: item[1], reverse= True)}
+    MAE_list= np.array(MAE_list)
+    return MAE_list, top_error_dict
+
+MAE_list, top_error_dict= test_model(feature_matrix, labels, img_directories, 100)
+print(MAE_list)
+print(round(np.mean(MAE_list), 2))
+print(top_error_dict)
