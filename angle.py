@@ -4,14 +4,6 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
 
-def rename_files(curated_dir):
-    global INITIAL
-    file_list= [file for file in os.listdir(curated_dir) if file.endswith(".png")]
-
-    for file in file_list:
-        os.rename(curated_dir+file, f"{curated_dir}{INITIAL}.png")
-        INITIAL += 1
-
 def calculate_angle(p1, p2):
     # Calculate the angle in degrees between two points
     x1, y1 = p1
@@ -37,7 +29,7 @@ def get_angle(image_path):
     # Display the image
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.imshow(img, cmap= "gray")
-    plt.title(f"Click on two points in the image to calculate the angle. \n {image_path}")
+    plt.title(f"Click on two points in the image to calculate the angle. \n Right click to remove the image! \n {image_path}")
 
     # Initialize variables for clicked points
     points= []
@@ -56,7 +48,7 @@ def get_angle(image_path):
                     # print(f"Angle between points: {angle:.2f} degrees")
                     plt.close()
         elif event.button== 3:
-            print("Picture marked for removal!")
+            print("Image marked for removal!")
             angle= -2
             plt.close()
 
@@ -66,12 +58,12 @@ def get_angle(image_path):
     return angle
 
 def get_angle_list(csv_file):
-    no_pics= len(file_list)
+    no_imgs= len(file_list)
     try:
         angles= np.loadtxt(csv_file)
         print("Existing CSV file read!")
     except:
-        angles= -1*np.ones(no_pics)
+        angles= -1*np.ones(no_imgs)
         np.savetxt(csv_file, angles)
         print("Angle CSV file created!")
     return angles
@@ -93,7 +85,7 @@ def check_labeled(file, angle_list):
     else:
         return True
     
-def update_unwanted(curated_dir, csv_dir, angle_list):
+def update_unwanted(image_dir, csv_dir, angle_list):
     global INITIAL
     
     remove_list= []
@@ -104,7 +96,7 @@ def update_unwanted(curated_dir, csv_dir, angle_list):
             remove_list.append(file_name)
     
     for file in remove_list:
-        os.remove(curated_dir+file)
+        os.remove(image_dir+file)
 
     angle_list= angle_list[angle_list != -2]
     write_angle_list(csv_dir, angle_list)
@@ -113,17 +105,16 @@ def update_unwanted(curated_dir, csv_dir, angle_list):
 
 if __name__ == "__main__":
     INITIAL= 2001
-    curated_dir= "./diffusion/diffusion_voxels/curated/"
+    image_dir= "./diffusion/diffusion_voxels/"
     csv_dir= "./diffusion/diffusion_voxels/diffusion.csv"
-    # rename_files(curated_dir)
-    file_list= [file for file in os.listdir(curated_dir) if file.endswith(".png")]
+    file_list= [file for file in os.listdir(image_dir) if file.endswith(".png")]
     angle_list= get_angle_list(csv_dir)
     labeled_count= 0
     total_count= angle_list.shape[0]
     
     for file in file_list:
         if not check_labeled(file, angle_list):
-            image_path= curated_dir + file
+            image_path= image_dir + file
             angle= get_angle(image_path)       
             if angle == -1:
                 print("Quitting labeling!")
@@ -135,6 +126,6 @@ if __name__ == "__main__":
                 print(f"{file} | Angle between points: {angle} degrees! | {angle_list[angle_list != -1].shape[0]}/{total_count} | CSV Updated!")
     
     print(f"{labeled_count} new images were labeled!")
-    update_unwanted(curated_dir, csv_dir, angle_list)
+    update_unwanted(image_dir, csv_dir, angle_list)
 
     
