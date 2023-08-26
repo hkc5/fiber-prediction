@@ -4,13 +4,13 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
 
-def rename_files(curated_dir, first_no):
+def rename_files(curated_dir):
+    global INITIAL
     file_list= [file for file in os.listdir(curated_dir) if file.endswith(".png")]
 
-    first_no= 2001
     for file in file_list:
-        os.rename(curated_dir+file, f"{curated_dir}{first_no}.png")
-        first_no += 1
+        os.rename(curated_dir+file, f"{curated_dir}{INITIAL}.png")
+        INITIAL += 1
 
 def calculate_angle(p1, p2):
     # Calculate the angle in degrees between two points
@@ -41,22 +41,25 @@ def get_angle(image_path):
 
     # Initialize variables for clicked points
     points= []
-    angle= 0
+    angle= -1
     def onclick(event):
         nonlocal points, angle
+        if event.button== 1:
+            if event.xdata is not None and event.ydata is not None:
+                points.append((event.xdata, event.ydata))
+                # Display a cursor at the clicked point
+                ax.plot(event.xdata, event.ydata, 'rs', markersize= 5)
+                plt.draw()
 
-        if event.xdata is not None and event.ydata is not None:
-            points.append((event.xdata, event.ydata))
+                if len(points) == 2:
+                    angle= calculate_angle(points[0], points[1])
+                    # print(f"Angle between points: {angle:.2f} degrees")
+                    plt.close()
+        elif event.button== 3:
+            print("Picture marked for removal!")
+            angle= -2
+            plt.close()
 
-            # Display a cursor at the clicked point
-            ax.plot(event.xdata, event.ydata, 'rs', markersize=5)
-            plt.draw()
-
-            if len(points) == 2:
-                angle = calculate_angle(points[0], points[1])
-                # print(f"Angle between points: {angle:.2f} degrees")
-                plt.close()
-                
     fig.canvas.mpl_connect('button_press_event', onclick)
     plt.show()
 
@@ -74,7 +77,8 @@ def get_angle_list(csv_file):
     return angles
 
 def update_angle_list(angle_list, angle, file):
-    index= int(file.replace(".png", "")) - 2000 -1
+    global INITIAL
+    index= int(file.replace(".png", "")) - INITIAL
     angle_list[index]= angle
     return angle_list
 
@@ -82,16 +86,36 @@ def write_angle_list(csv_dir, angle_list):
     np.savetxt(csv_dir, angle_list, fmt= "%.0f")
 
 def check_labeled(file, angle_list):
-    index= int(file.replace(".png", "")) - 2000 -1
+    global INITIAL
+    index= int(file.replace(".png", "")) - INITIAL
     if angle_list[index] == -1:
         return False
     else:
         return True
+    
+def update_unwanted(curated_dir, csv_dir, angle_list):
+    global INITIAL
+    
+    remove_list= []
+    for index, angle in enumerate(angle_list):
+        if angle == -2:
+            
+            file_name= str(index + INITIAL) + ".png"
+            remove_list.append(file_name)
+    
+    for file in remove_list:
+        os.remove(curated_dir+file)
+
+    angle_list= angle_list[angle_list != -2]
+    write_angle_list(csv_dir, angle_list)
+    print(f"{len(remove_list)} files were removed! CSV Updated!")
+    
 
 if __name__ == "__main__":
+    INITIAL= 2001
     curated_dir= "./diffusion/diffusion_voxels/curated/"
-    # rename_files(curated_dir, 2001)
     csv_dir= "./diffusion/diffusion_voxels/diffusion.csv"
+    # rename_files(curated_dir)
     file_list= [file for file in os.listdir(curated_dir) if file.endswith(".png")]
     angle_list= get_angle_list(csv_dir)
     labeled_count= 0
@@ -108,7 +132,9 @@ if __name__ == "__main__":
                 angle_list= update_angle_list(angle_list, angle, file)
                 write_angle_list(csv_dir, angle_list)
                 labeled_count += 1
-                print(f"{file} | Angle between points: {angle} degrees! | {angle_list[angle_list != -1].shape[0]}/{total_count} | CSV Updated!")            
-
+                print(f"{file} | Angle between points: {angle} degrees! | {angle_list[angle_list != -1].shape[0]}/{total_count} | CSV Updated!")
+    
     print(f"{labeled_count} new images were labeled!")
+    update_unwanted(curated_dir, csv_dir, angle_list)
+
     
