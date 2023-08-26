@@ -4,6 +4,14 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
 
+def rename_files(curated_dir, first_no):
+    file_list= [file for file in os.listdir(curated_dir) if file.endswith(".png")]
+
+    first_no= 2001
+    for file in file_list:
+        os.rename(curated_dir+file, f"{curated_dir}{first_no}.png")
+        first_no += 1
+
 def calculate_angle(p1, p2):
     # Calculate the angle in degrees between two points
     x1, y1 = p1
@@ -29,7 +37,7 @@ def get_angle(image_path):
     # Display the image
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.imshow(img, cmap= "gray")
-    plt.title("Click on two points in the image to calculate the angle.")
+    plt.title(f"Click on two points in the image to calculate the angle. \n {image_path}")
 
     # Initialize variables for clicked points
     points= []
@@ -66,37 +74,41 @@ def get_angle_list(csv_file):
     return angles
 
 def update_angle_list(angle_list, angle, file):
-    index= int(file.replace(".png", "")) - 2000
+    index= int(file.replace(".png", "")) - 2000 -1
     angle_list[index]= angle
     return angle_list
 
 def write_angle_list(csv_dir, angle_list):
-    np.savetxt(csv_dir, angle_list)
+    np.savetxt(csv_dir, angle_list, fmt= "%.0f")
 
 def check_labeled(file, angle_list):
-    index= int(file.replace(".png", "")) - 2000
+    index= int(file.replace(".png", "")) - 2000 -1
     if angle_list[index] == -1:
         return False
     else:
         return True
 
 if __name__ == "__main__":
-    curated_dir= "./diffusion/diffusion_voxels/curated/"  # Replace with your image file path
+    curated_dir= "./diffusion/diffusion_voxels/curated/"
+    # rename_files(curated_dir, 2001)
     csv_dir= "./diffusion/diffusion_voxels/diffusion.csv"
     file_list= [file for file in os.listdir(curated_dir) if file.endswith(".png")]
     angle_list= get_angle_list(csv_dir)
     labeled_count= 0
-
+    total_count= angle_list.shape[0]
+    
     for file in file_list:
         if not check_labeled(file, angle_list):
             image_path= curated_dir + file
-            angle= get_angle(image_path)
-            print(f"{file} | Angle between points: {angle} degrees")
-            angle_list= update_angle_list(angle_list, angle, file)
-            labeled_count += 1
+            angle= get_angle(image_path)       
             if angle == -1:
                 print("Quitting labeling!")
                 break
-        
-    write_angle_list(csv_dir, angle_list)
-    print(f"Total {labeled_count} images were labeled! Angle CSV updated!")
+            else:
+                angle_list= update_angle_list(angle_list, angle, file)
+                write_angle_list(csv_dir, angle_list)
+                labeled_count += 1
+                print(f"{file} | Angle between points: {angle} degrees! | {angle_list[angle_list != -1].shape[0]}/{total_count} | CSV Updated!")            
+
+    print(f"{labeled_count} new images were labeled!")
+    
