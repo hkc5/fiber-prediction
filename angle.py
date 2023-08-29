@@ -29,7 +29,7 @@ def get_angle(image_path):
     # Display the image
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.imshow(img, cmap= "gray")
-    plt.title(f"Click on two points in the image to calculate the angle. \n Right click to remove the image! \n {image_path}")
+    plt.title(f"Click on two points in the image to calculate the angle. \n Right click to remove the image. \n {image_path}")
 
     # Initialize variables for clicked points
     points= []
@@ -98,9 +98,10 @@ def update_unwanted(image_dir, csv_dir, angle_list):
     for file in remove_list:
         os.remove(image_dir+file)
 
-    angle_list= angle_list[angle_list != -2]
+    # angle_list= angle_list[angle_list != -2]
+    angle_list[angle_list == -2]= None # Set removed image angles to None
     write_angle_list(csv_dir, angle_list)
-    print(f"{len(remove_list)} files were removed! CSV Updated!")
+    print(f"{len(remove_list)} files were removed!")
     
 
 if __name__ == "__main__":
