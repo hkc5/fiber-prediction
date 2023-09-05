@@ -128,5 +128,4 @@ if __name__ == "__main__":
     
     print(f"{labeled_count} new images were labeled!")
     update_unwanted(image_dir, csv_dir, angle_list)
-
     
