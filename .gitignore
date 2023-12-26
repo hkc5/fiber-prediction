@@ -158,6 +158,7 @@ cython_debug/
 # Pictures
 pictures/
 pictures2/
+images/
 
 test
 diffusion
