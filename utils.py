@@ -5,9 +5,13 @@ from skimage.feature import hog
 GRIDQ_default = np.arange(1,6)
 ORIENTATION_default = 10
 
-def get_img(image_directory, rotated= False):
+def get_img(image_directory, square= True):
     image = Image.open(image_directory)
     image = image.convert('L')
+    
+    if square:
+        a = min(image.size)
+        image = image.resize((a, a))
     return image
 
 def get_feature_vector(image, grid_q, no_orientation=10):
