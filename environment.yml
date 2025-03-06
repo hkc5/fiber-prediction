@@ -1,0 +1,43 @@
+name: fiber-orientation
+
+channels:
+  - conda-forge
+  - pytorch
+  - defaults
+
+dependencies:
+  # Python version
+  - python=3.12
+
+  # Core scientific computing
+  - numpy
+  - scipy
+  - pandas
+
+  # Machine learning
+  - scikit-learn
+  - scikit-image
+  - pytorch
+  - torchvision
+
+  # Image processing
+  - opencv
+  - pillow
+
+  # Visualization
+  - matplotlib
+  - seaborn
+
+  # Jupyter
+  - jupyter
+  - notebook
+
+  # Development and testing
+  - pytest
+  - flake8
+  - mypy
+
+  # Pip-installed packages (if needed)
+  - pip
+  - pip:
+    - typing-extensions

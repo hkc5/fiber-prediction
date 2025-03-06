@@ -1,0 +1,8 @@
+# cache files
+__pycache__
+
+# ignore egg-info
+*.egg-info
+
+# ignore the images folder
+images/
