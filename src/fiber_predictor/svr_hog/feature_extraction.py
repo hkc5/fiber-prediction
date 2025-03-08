@@ -2,7 +2,6 @@ import numpy as np
 from skimage.feature import hog
 from PIL import Image
 
-
 class HogFeatureExtractor:
     def __init__(self, grid_quotient, orientations):
         """
@@ -25,14 +24,19 @@ class HogFeatureExtractor:
         Returns:
         - np.array: Extracted HOG feature vector.
         """
-        if not isinstance(image, Image.Image):
-            raise ValueError("Input must be a PIL.Image")
-
+        # Convert numpy array to PIL Image if needed
+        if isinstance(image, np.ndarray):
+            image_array = image
+        else:
+            if not isinstance(image, Image.Image):
+                raise ValueError("Input must be either a numpy array or PIL.Image")
+            image_array = np.array(image)
+        
         hog_features = [
             hog(
-                image,
+                image_array,
                 orientations=self.orientations,
-                pixels_per_cell=(image.size[0] // gq, image.size[1] // gq),
+                pixels_per_cell=(image_array.shape[0] // gq, image_array.shape[1] // gq),
                 cells_per_block=(1, 1),
                 feature_vector=True,
             )
