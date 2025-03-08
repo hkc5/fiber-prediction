@@ -105,7 +105,7 @@ def slice_image(image: np.ndarray, voxel_size: int) -> List[np.ndarray]:
     
     return slices
 
-def augment_data(img: np.ndarray, label: int, img_dir: str, img_directories: str, 
+def augment_data(img: np.ndarray, label: int,
                  feature_matrix: List, labels: List, 
                  GRIDQ=np.array([1, 2, 3, 4, 5]), ORIENTATION: int = 10) -> Tuple[List, List]:
     """
@@ -155,7 +155,7 @@ def augment_data(img: np.ndarray, label: int, img_dir: str, img_directories: str
     
     return feature_matrix, labels
 
-def get_data(file_dir: str, csv_dir: str, i_start: int = 1, augment: bool = False, 
+def get_data(file_dir: str, csv_dir: str, augment: bool = False, 
              GRIDQ=np.array([1, 2, 3, 4, 5]), ORIENTATION: int = 10) -> Tuple[List, List]:
     """
     Load image data from directory.
@@ -208,7 +208,7 @@ def get_data(file_dir: str, csv_dir: str, i_start: int = 1, augment: bool = Fals
         # Optional data augmentation
         if augment:
             feature_matrix, labels = augment_data(
-                img, label, file_dir, csv_dir, 
+                img, label,
                 feature_matrix, labels, 
                 GRIDQ=GRIDQ, ORIENTATION=ORIENTATION
             )

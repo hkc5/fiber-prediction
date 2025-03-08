@@ -148,40 +148,34 @@ def balance_dataset(dataset, bins):
     dataset.filenames = balanced_filenames
     dataset.labels = balanced_labels
 
-
-# Example usage of the refactored Dataset and balance function
-if __name__ == "__main__":
-    # Paths and parameters
-    FILE_DIR = "images/bio/"
-    LABELS_PATH = "images/bio/labels.csv"
-    GRID_QUOTIENT = np.arange(1, 6)
-    ORIENTATIONS = 8
-    BINS = np.arange(0, 181, 20)  # Define bins for balancing, e.g., [0, 20, 40, ..., 180]
-
-    # Create dataset with augment_whole_dataset set to True
+def load_dataset(file_dir, csv_dir, config, augment=False, balance=False):
+    grid_quotient = config['grid_quotient']
+    orientations = config['orientations']
+    
     dataset = HogDataset(
-        labels_path=LABELS_PATH,
-        file_dir=FILE_DIR,
-        grid_quotient=GRID_QUOTIENT,
-        orientations=ORIENTATIONS,
-        augment_whole_dataset=True,
+        labels_path=csv_dir,
+        file_dir=file_dir,
+        grid_quotient=grid_quotient,
+        orientations=orientations,
+        augment_whole_dataset=augment
     )
-
-    # Balance the dataset using the standalone function
-    print("Dataset length before balancing:", len(dataset))
-    balance_dataset(dataset, BINS)
-    print("Dataset length after balancing:", len(dataset))
-
-    # DataLoader for batching
-    dataloader = DataLoader(dataset, batch_size=4, shuffle=True, num_workers=2)
-
-    # Iterate over DataLoader
-    for imgs, features, angles in dataloader:
-        print("Image shape:", imgs.shape)  # Images are now tensors, compatible with PyTorch
-        print("Features shape:", features.shape)
-        print("Angles shape:", angles.shape)
-        break
-
-    # plot the distribution of angles
-    plt.hist(dataset.labels, bins=9)
-    plt.show()
+    
+    if balance:
+        angle_bins = config['angle_bins']
+        balance_dataset(dataset, angle_bins)
+    
+    feature_matrix = []
+    labels = []
+    for idx in range(len(dataset)):
+        _, features_tensor, angle = dataset[idx]
+        feature_matrix.append(features_tensor.numpy())
+        labels.append(angle)
+    
+    feature_matrix = np.array(feature_matrix)
+    labels = np.array(labels)
+    
+    return {
+        'features': feature_matrix,
+        'labels': labels,
+        'n_samples': len(labels)
+    }
