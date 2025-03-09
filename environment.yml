@@ -32,12 +32,3 @@ dependencies:
   - jupyter
   - notebook
 
-  # Development and testing
-  - pytest
-  - flake8
-  - mypy
-
-  # Pip-installed packages (if needed)
-  - pip
-  - pip:
-    - typing-extensions
