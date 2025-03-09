@@ -1,0 +1,2 @@
+# Ignore augmented images as they are generated
+augmented*.png
