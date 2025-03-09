@@ -14,25 +14,28 @@ fiber-orientation/
 │       ├── svr_hog/        # Support Vector Regression models
 │       └── utils/          # Utility functions
 │
-├── tests/          # Unit tests
 ├── notebooks/      # Exploratory Jupyter notebooks
-├── data/           # Data storage
-│   ├── raw/        # Original data
-│   ├── processed/  # Preprocessed data
-│   └── models/     # Trained models
+│   ├── HOG/       # HOG feature analysis notebooks
+│   └── NN/        # Neural network analysis notebooks
 │
-├── scripts/        # Utility and training scripts
-├── docs/           # Project documentation
+├── models/        # Trained models
+│   ├── cnn/       # CNN model weights
+│   └── svr_hog/   # SVR-HOG model weights
 │
-├── LICENSE         # Project license
-└── README.md       # Project overview
+├── images/        # Image data
+├── environment.yml # Conda environment configuration
+└── README.md      # Project overview
 ```
 
-## Prerequisites
-- Python 3.8+
-- Conda (recommended)
+## Environment Setup
 
-## Setup
+This project uses Conda for environment management. The environment includes PyTorch for deep learning, scikit-learn for machine learning, OpenCV for image processing, and other scientific computing libraries.
+
+### Prerequisites
+- Conda (Miniconda or Anaconda)
+
+### Creating the Environment
+
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/fiber-orientation.git
@@ -43,29 +46,31 @@ conda env create -f environment.yml
 conda activate fiber-orientation
 ```
 
+### Key Dependencies
+- Python 3.12
+- PyTorch & TorchVision
+- scikit-learn & scikit-image
+- OpenCV
+- NumPy & Pandas
+- Jupyter Notebook
+
 ## Usage
 
-### Prediction
-```python
-from src.fiber_predictor.utils.utils import get_feature_vector
-import cv2
+### Jupyter Notebooks
+The project includes several Jupyter notebooks for analysis:
 
-# Load and process an image
-image = cv2.imread('path/to/image.png')
-features = get_feature_vector(image)
-```
+- `notebooks/CNN_Inference.ipynb`: CNN model inference and visualization
+- `notebooks/HOG_Inference.ipynb`: HOG-based model inference
+- `notebooks/EDA.ipynb`: Exploratory Data Analysis
 
-### Training
-```bash
-# Run training script
-python scripts/train_model.py \
-    --data-dir data/raw \
-    --csv-dir data/processed
-```
+The `notebooks/HOG/` and `notebooks/NN/` directories contain detailed analysis notebooks for each approach.
 
-## Documentation
-- [Installation Guide](docs/installation.md)
-- [Contributing Guidelines](CONTRIBUTING.md)
+### Models
+Pre-trained models are available in the `models/` directory:
+- CNN models in `models/cnn/`
+- SVR-HOG models in `models/svr_hog/`
+
+Each model type includes various versions (raw, augmented, balanced) for different use cases.
 
 ## License
 MIT License - see [LICENSE](LICENSE) file for details.

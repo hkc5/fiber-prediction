@@ -19,6 +19,7 @@ dependencies:
   - scikit-image
   - pytorch
   - torchvision
+  - torchsummary
 
   # Image processing
   - opencv
@@ -26,7 +27,6 @@ dependencies:
 
   # Visualization
   - matplotlib
-  - seaborn
 
   # Jupyter
   - jupyter
