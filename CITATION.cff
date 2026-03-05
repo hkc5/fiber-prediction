@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+
+authors:
+  - family-names: "Saruhan"
+    given-names: "E.N."
+  - family-names: "Ozturk"
+    given-names: "Hakancan"
+  - family-names: "Kul"
+    given-names: "D."
+  - family-names: "Sevgin"
+    given-names: "B."
+  - family-names: "Pekkan"
+    given-names: "C."
+
+title: "Learning-enhanced 3D fiber orientation mapping in thick cardiac tissues"
+
+journal: "Biomedical Optics Express"
+volume: "16"
+issue: "8"
+year: 2025
+doi: "10.1364/BOE.532799"
+url: "https://opg.optica.org/abstract.cfm?uri=boe-16-8-3315"
+
+repository-code: "https://github.com/hkc5/fiber-prediction"
+license: MIT
+
+abstract: |
+  Advanced machine learning project for predicting and analyzing fiber orientations 
+  using state-of-the-art image processing and neural network techniques. This software 
+  supports the research published in Biomedical Optics Express (2025).
+
+keywords:
+  - "fiber orientation"
+  - "machine learning"
+  - "cardiac tissues"
+  - "3D mapping"
+  - "deep learning"
+  - "image processing"
