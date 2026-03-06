@@ -72,5 +72,34 @@ Pre-trained models are available in the `models/` directory:
 
 Each model type includes various versions (raw, augmented, balanced) for different use cases.
 
+## Citation
+
+If you use this software in your research, please cite the associated publication:
+
+**E.N. Saruhan, H. Ozturk, D. Kul, B. Sevgin, C. Pekkan**, "Learning-enhanced 3D fiber orientation mapping in thick cardiac tissues," *Biomedical Optics Express*, vol. 16, no. 8, 2025. DOI: [10.1364/BOE.532799](https://doi.org/10.1364/BOE.532799)
+
+### BibTeX
+
+```bibtex
+@article{saruhan2025learning,
+  title={Learning-enhanced 3D fiber orientation mapping in thick cardiac tissues},
+  author={Saruhan, E.N. and Ozturk, Hakancan and Kul, D. and Sevgin, B. and Pekkan, C.},
+  journal={Biomedical Optics Express},
+  volume={16},
+  number={8},
+  year={2025},
+  doi={10.1364/BOE.532799},
+  url={https://opg.optica.org/abstract.cfm?uri=boe-16-8-3315}
+}
+```
+
+### Citing the Software
+
+This repository includes a `CITATION.cff` file with detailed citation metadata. The CITATION.cff format is the standard for citing research software and is supported by GitHub, Zotero, and other research tools.
+
+See: [CITATION.cff](CITATION.cff)
+
+---
+
 ## License
 MIT License - see [LICENSE](LICENSE) file for details.
